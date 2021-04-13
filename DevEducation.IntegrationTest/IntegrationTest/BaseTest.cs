@@ -9,7 +9,7 @@ namespace IntegrationTest
     public abstract class BaseTest
     {
         protected SqlConnection _connection;
-
+        protected AppSettings appSettings = JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText("appsettings.json"));
         public BaseTest()
         {
             _connection = new SqlConnection(JsonSerializer.Deserialize<string>(File.ReadAllText("connectionString.json")));
