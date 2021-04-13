@@ -8,20 +8,10 @@ namespace IntegrationTest
 {
     public abstract class BaseTest
     {
-        private string _connectionString;
         protected SqlConnection _connection;
         public BaseTest()
         {
-            GetConnectionString();
-            _connection = new SqlConnection(_connectionString);
-        }
-        private async void GetConnectionString()
-        {
-            // чтение данных
-            using (FileStream fs = new FileStream("connectionString.json", FileMode.OpenOrCreate))
-            {
-                _connectionString = await JsonSerializer.DeserializeAsync<string>(fs);
-            }
+            _connection = new SqlConnection(JsonSerializer.Deserialize<string>(File.ReadAllText("connectionString.json")));
         }
     }
 }
