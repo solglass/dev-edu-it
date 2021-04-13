@@ -27,14 +27,7 @@ namespace IntegrationTest
         public void RegistrationPass_ValidUserInputModelSent_OkResponseGot_UserExistsUnderId()
         {
             //Given
-            _httpMethod = Method.POST;
-            _request = new RestRequest("api/user/register", _httpMethod);
-            _inputModel = (UserInputModel)UserInputModelMockGetter.GetUserInputModelMock(1).Clone();
-            _request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
-            var response = _client.Execute<UserOutputModel>(_request);
-
-            //When
-            var expected = new UserOutputModel
+            var expectedOutputModel = new UserOutputModel
             {
                 Email = "ololosh@mail.ru",
                 FirstName = "Ololosh",
@@ -45,10 +38,23 @@ namespace IntegrationTest
                 Login = "ololosha",
                 Roles = new List<int> { 1 }
             };
+            var expectedStatusCode = HttpStatusCode.OK;
+
+            _httpMethod = Method.POST;
+            _inputModel = (UserInputModel)UserInputModelMockGetter.GetUserInputModelMock(1).Clone();
+            _request = new RestRequest("api/user/register", _httpMethod);
+            _request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
+
+            //When
+            var response = _client.Execute<UserOutputModel>(_request);
+            var actualStatusCode = response.StatusCode;
+            var actualOutputModel = response.Data;
+
 
             //Then
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-            Assert.AreEqual(expected, response.Data);
+            Assert.IsTrue(actualOutputModel.Id != 0);
+            Assert.AreEqual(expectedStatusCode, actualStatusCode);
+            Assert.AreEqual(expectedOutputModel, actualOutputModel);
         }
 
         [TearDown]
