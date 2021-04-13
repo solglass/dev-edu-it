@@ -16,11 +16,13 @@ namespace IntegrationTest
         private Method _httpMethod;
         private RestRequest _request;
         private UserInputModel _inputModel;
+        private List<int> _userIdList;
 
         [SetUp]
         public void Setup()
         {
             _client = new RestClient("https://localhost:44365/");
+            _userIdList = new List<int>();
         }
      
         [Test]
@@ -49,6 +51,7 @@ namespace IntegrationTest
             var response = _client.Execute<UserOutputModel>(_request);
             var actualStatusCode = response.StatusCode;
             var actualOutputModel = response.Data;
+            _userIdList.Add(actualOutputModel.Id);
 
 
             //Then
@@ -60,12 +63,24 @@ namespace IntegrationTest
         [TearDown]
         public void TearDown()
         {
-            FUCKING_NAPALM_DELETE();
+            DeleteAllRoleFromUser();
+            DeleteUser();
         }
-        public void FUCKING_NAPALM_DELETE()
+
+        private void DeleteAllRoleFromUser()
         {
-            _connection.Execute("dbo.CleanDatabase",
-                 commandType: System.Data.CommandType.StoredProcedure);
+            foreach (var userId in _userIdList)
+            {
+                _connection.Execute("dbo.User_Role_DeleteAll", new { userId }, commandType: System.Data.CommandType.StoredProcedure);
+            }
+        }
+
+        private void DeleteUser()
+        {
+            foreach (var Id in _userIdList)
+            {
+                _connection.Execute("dbo.User_HardDelete", new { Id }, commandType: System.Data.CommandType.StoredProcedure);
+            }
         }
     }
 }
