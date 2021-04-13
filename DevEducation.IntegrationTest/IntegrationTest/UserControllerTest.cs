@@ -7,6 +7,8 @@ using System.Net;
 using IntegrationTest.Models.OutputModels;
 using System.Collections.Generic;
 using Dapper;
+using IntegrationTest.Models;
+using RestSharp.Authenticators;
 
 namespace IntegrationTest
 {
@@ -17,12 +19,20 @@ namespace IntegrationTest
         private RestRequest _request;
         private UserInputModel _inputModel;
         private List<int> _userIdList;
+        private string _token;
 
         [SetUp]
         public void Setup()
         {
             _client = new RestClient("https://localhost:44365/");
             _userIdList = new List<int>();
+            _httpMethod = Method.POST;
+            var authenticationInputModel = new AuthenticationInputModel { Login = "volodya22", Password = "qwe!@#" };
+            var authenticationRequest = new RestRequest("api/Authentication", _httpMethod);
+            authenticationRequest.AddParameter("application/json", JsonSerializer.Serialize(authenticationInputModel), ParameterType.RequestBody);
+            var authenticationResponse = _client.Execute<AuthResponse>(authenticationRequest);
+            _token = authenticationResponse.Data.Token;
+            _client.Authenticator = new JwtAuthenticator(_token);
         }
      
         [Test]
