@@ -8,20 +8,22 @@ namespace IntegrationTest
 {
     public abstract class BaseTest
     {
-        private string _connectionString;
+        private string _connectionString = "Data Source=80.78.240.16;Initial Catalog=DevEdu.Test;Persist Security Info=True;User ID=student;Password=qwe!23";
         protected SqlConnection _connection;
+
         public BaseTest()
         {
-            GetConnectionString();
+            //GetConnectionString();
             _connection = new SqlConnection(_connectionString);
         }
-        private async void GetConnectionString()
-        {
-            // чтение данных
-            using (FileStream fs = new FileStream("connectionString.json", FileMode.OpenOrCreate))
-            {
-                _connectionString = await JsonSerializer.DeserializeAsync<string>(fs);
-            }
-        }
+
+        //private async void GetConnectionString()
+        //{
+        //    // чтение данных
+        //    using (FileStream fs = new FileStream("connectionString.json", FileMode.OpenOrCreate))
+        //    {
+        //        _connectionString = await JsonSerializer.DeserializeAsync<string>(fs);
+        //    }
+        //}
     }
 }
