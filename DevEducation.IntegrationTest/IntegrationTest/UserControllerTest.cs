@@ -29,17 +29,7 @@ namespace IntegrationTest
         public void RegistrationPass_ValidUserInputModelSent_OkResponseGot_UserExistsUnderId()
         {
             //Given
-            var expectedOutputModel = new UserOutputModel
-            {
-                Email = "ololosh@mail.ru",
-                FirstName = "Ololosh",
-                BirthDate = "25.09.1995",
-                LastName = "Horoshiy",
-                Phone = "123123123",
-                UserPic = " 21",
-                Login = "ololosha",
-                Roles = new List<int> { 1 }
-            };
+            var expectedOutputModel = (UserOutputModel)UserOutputModelMockGetter.GetUserOutputModelMock(1).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
             _httpMethod = Method.POST;
