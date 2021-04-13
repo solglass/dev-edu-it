@@ -27,7 +27,7 @@ namespace IntegrationTest
             _client = new RestClient("https://localhost:44365/");
             _userIdList = new List<int>();
             _httpMethod = Method.POST;
-            var authenticationInputModel = new AuthenticationInputModel { Login = "volodya22", Password = "qwe!@#" };
+            var authenticationInputModel = new AuthenticationInputModel { Login = appSettings.Login, Password = appSettings.Password };
             var authenticationRequest = new RestRequest("api/Authentication", _httpMethod);
             authenticationRequest.AddParameter("application/json", JsonSerializer.Serialize(authenticationInputModel), ParameterType.RequestBody);
             var authenticationResponse = _client.Execute<AuthResponse>(authenticationRequest);
