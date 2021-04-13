@@ -64,8 +64,8 @@ namespace IntegrationTest
         }
         public void FUCKING_NAPALM_DELETE()
         {
-           //_connection.Execute("dbo.CleanDatabase",
-           //     commandType: System.Data.CommandType.StoredProcedure);
+            _connection.Execute("dbo.CleanDatabase",
+                 commandType: System.Data.CommandType.StoredProcedure);
         }
     }
 }
