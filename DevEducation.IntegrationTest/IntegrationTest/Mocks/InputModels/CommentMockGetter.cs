@@ -2,7 +2,7 @@
 {
     public static class CommentInputModelMockGetter
     {
-        public static CommentInputModel GetCommentDtoMock(int id)
+        public static CommentInputModel GetCommentInputModelMock(int id)
         {
             return id switch
             {
