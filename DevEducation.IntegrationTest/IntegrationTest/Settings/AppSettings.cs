@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace IntegrationTest.Settings
+﻿namespace IntegrationTest.Settings
 {
     public class AppSettings
     {

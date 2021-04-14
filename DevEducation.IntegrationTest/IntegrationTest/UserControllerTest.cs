@@ -1,7 +1,8 @@
 using NUnit.Framework;
 using RestSharp;
 using IntegrationTest.Models.InputModels;
-using IntegrationTest.Mocks;
+using IntegrationTest.Mocks.InputModels;
+using IntegrationTest.Mocks.OutputModels;
 using System.Text.Json;
 using System.Net;
 using IntegrationTest.Models.OutputModels;
