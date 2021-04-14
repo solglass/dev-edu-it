@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace IntegrationTest.Models.InputModels
+﻿namespace IntegrationTest.Models.InputModels
 {
     public class AuthenticationInputModel
     {
