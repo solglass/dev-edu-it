@@ -1,58 +1,57 @@
-﻿using EducationSystem.Data.Models;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using IntegrationTest.Models.OutputModels;
 
-namespace EducationSystem.Data.Tests.Mocks
+namespace IntegrationTest.Mocks
 {
-    [ExcludeFromCodeCoverage]
     public static class CourseExtendedOutputModelGetter
     {
-        public static CourseDto GetCourseDtoMock(int id)
+        public static CourseExtendedOutputModel GetCourseExtendedOutputModelMock(int id)
         {
             return id switch
             {
-                1 => new CourseDto
+                1 => new CourseExtendedOutputModel
                 {
                     Description = "Course Test 1 mock",
                     Duration = 8,
                     Name = "Test 1 C#",
                     IsDeleted = false,
-                    Themes=new List<ThemeDto>(),
-                    Materials = new List<MaterialDto>()
+                    Themes=new List<ThemeOutputModel>(),
+                    Materials = new List<MaterialOutputModel>()
                 },
-                2 => new CourseDto
+                2 => new CourseExtendedOutputModel
                 {
                     Description = "Course Test 2 mock",
                     Duration = 16,
                     Name = "Test 2 C#",
-                    Themes = new List<ThemeDto>(),
-                    Materials = new List<MaterialDto>()
+                    Themes = new List<ThemeOutputModel>(),
+                    Materials = new List<MaterialOutputModel>()
                 },
-                3 => new CourseDto
+                3 => new CourseExtendedOutputModel
                 {
                     Description = "Course Test 3 mock",
                     Duration = 32,
                     Name = "Test 3 C#",
-                    Themes = new List<ThemeDto>(),
-                    Materials = new List<MaterialDto>()
+                    Themes = new List<ThemeOutputModel>(),
+                    Materials = new List<MaterialOutputModel>()
                 },
-                4 => new CourseDto
+                4 => new CourseExtendedOutputModel
                 {
                     Description = "Course Test 4 mock",
                     Duration = 4,
                     Name = "Test 4 C#",
-                    Themes = new List<ThemeDto>(),
-                    Materials = new List<MaterialDto>()
+                    Themes = new List<ThemeOutputModel>(),
+                    Materials = new List<MaterialOutputModel>()
                 },
-                5 => new CourseDto
+                5 => new CourseExtendedOutputModel
                 {
                     Description = "Course Test 5 mock",
                     Duration = 2,
                     Name = "Test 5 C#",
-                    Themes = new List<ThemeDto>(),
-                    Materials = new List<MaterialDto>()
+                    Themes = new List<ThemeOutputModel>(),
+                    Materials = new List<MaterialOutputModel>()
                 },
-                6=> new CourseDto(),
+                6=> new CourseExtendedOutputModel(),
                 _ => null,
             };
         }
