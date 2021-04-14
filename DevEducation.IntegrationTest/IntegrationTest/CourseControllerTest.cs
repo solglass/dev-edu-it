@@ -38,15 +38,19 @@ namespace IntegrationTest
             _client.Authenticator = new JwtAuthenticator(_token);
         }
 
-        [Test]
-        public void AddCourse_ValidCourseInputModelSent_OkResponseGot_CourseExistsUnderId()
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        [TestCase(4)]
+        [TestCase(5)]
+        public void AddCourse_ValidCourseInputModelSent_OkResponseGot_CourseExistsUnderId(int mockId)
         {
             //Given
-            var expectedOutputModel = (CourseOutputModel)CourseOutputModelMockGetter.GetCourseOutputModelMock(1).Clone();
+            var expectedOutputModel = (CourseOutputModel)CourseOutputModelMockGetter.GetCourseOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
             _httpMethod = Method.POST;
-            _inputModel = (CourseInputModel)CourseMockGetter.GetCourseInputModelMock(1).Clone();
+            _inputModel = (CourseInputModel)CourseMockGetter.GetCourseInputModelMock(mockId).Clone();
             _request = new RestRequest("api/Course", _httpMethod);
             _request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
 
@@ -69,7 +73,7 @@ namespace IntegrationTest
         {
             _CourseIdList.ForEach(Id =>
             {
-                _connection.Execute("dbo.User_HardDelete", new { Id }, commandType: System.Data.CommandType.StoredProcedure);
+                _connection.Execute("dbo.Course_HardDelete", new { Id }, commandType: System.Data.CommandType.StoredProcedure);
             });
         }
     }
