@@ -38,7 +38,10 @@ namespace IntegrationTest.Models.OutputModels
             var courseObj = (CourseOutputModel)obj;
 
             return (Id == courseObj.Id &&
-                    Name.Equals(courseObj.Name) &&
+                    ( (String.IsNullOrEmpty(courseObj.Name) && String.IsNullOrEmpty(Name)) ||
+                    Name.Equals(courseObj.Name) )  && 
+                    (String.IsNullOrEmpty(courseObj.Description) &&
+                    String.IsNullOrEmpty(Description)) ||
                     Description.Equals(courseObj.Description) &&
                     Duration == courseObj.Duration);
         }
