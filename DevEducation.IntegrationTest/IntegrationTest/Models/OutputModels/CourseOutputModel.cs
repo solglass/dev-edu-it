@@ -12,7 +12,7 @@ namespace IntegrationTest.Models.OutputModels
         public List<ThemeOutputModel> Themes { get; set; }
         public List<MaterialOutputModel> Materials { get; set; }
 
-        public object Clone()
+        public virtual object Clone()
         {
             return new CourseOutputModel()
             {
@@ -38,10 +38,10 @@ namespace IntegrationTest.Models.OutputModels
             var courseObj = (CourseOutputModel)obj;
 
             return (Id == courseObj.Id &&
-                    ( (String.IsNullOrEmpty(courseObj.Name) && String.IsNullOrEmpty(Name)) ||
+                    ( (string.IsNullOrEmpty(courseObj.Name) && string.IsNullOrEmpty(Name)) ||
                     Name.Equals(courseObj.Name) )  && 
-                    (String.IsNullOrEmpty(courseObj.Description) &&
-                    String.IsNullOrEmpty(Description)) ||
+                    (string.IsNullOrEmpty(courseObj.Description) &&
+                    string.IsNullOrEmpty(Description)) ||
                     Description.Equals(courseObj.Description) &&
                     Duration == courseObj.Duration);
         }
