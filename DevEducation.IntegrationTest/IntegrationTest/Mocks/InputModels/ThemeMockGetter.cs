@@ -31,11 +31,7 @@ namespace IntegrationTest.Mocks
                 {
                     Name = "Test theme 5"
                 },
-                6 => new ThemeInputModel
-                {
-                    Name = "Test theme 6"
-                },
-                7=>new ThemeInputModel(),
+                6 =>new ThemeInputModel(),
                 _ => null,
             };
         }
