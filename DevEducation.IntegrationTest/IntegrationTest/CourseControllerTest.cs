@@ -255,6 +255,62 @@ namespace IntegrationTest
             Assert.IsNull(actualOutputModel);
         }
 
+        [TestCase(1)]
+        public void RecoverCourse_ValidCourseId_OkResponseGot_RecievedExtendedCourseModelMatchesExpectedEmptyModel(int mockId)
+        {
+            //Given
+            var expectedOutputModel = (CourseExtendedOutputModel)CourseExtendedOutputModelGetter.GetCourseExtendedOutputModelMock(mockId).Clone();
+            var expectedStatusCode = HttpStatusCode.OK;
+
+            _httpMethod = Method.POST;
+            _inputModel = (CourseInputModel)CourseMockGetter.GetCourseInputModelMock(mockId).Clone();
+            _request = new RestRequest("api/Course", _httpMethod);
+            _request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
+            var responsePost = _client.Execute<CourseExtendedOutputModel>(_request);
+            var addedOutputModel = responsePost.Data;
+            expectedOutputModel.Id = addedOutputModel.Id;
+            expectedOutputModel.IsDeleted = false;
+            _CourseIdList.Add(expectedOutputModel.Id);
+
+
+            _httpMethod = Method.DELETE;
+            _request = new RestRequest($"api/Course/{addedOutputModel.Id}", _httpMethod);
+
+            //When 
+            _httpMethod = Method.PUT;
+            _request = new RestRequest($"api/Course/{addedOutputModel.Id}/recovery", _httpMethod);
+            var responseGet = _client.Execute<CourseExtendedOutputModel>(_request);
+            var actualStatusCode = responseGet.StatusCode;
+            var actualOutputModel = responseGet.Data;
+
+
+
+            //Then
+            Assert.AreEqual(expectedStatusCode, actualStatusCode);
+            Assert.AreEqual(expectedOutputModel, actualOutputModel);
+        }
+
+        [TestCase(1)]
+        public void RecoverCourse_InvalidCourseIdSent_NotFoundResponseGot_RecievedNull(int mockId)
+        {
+            //Given
+            // var expectedOutputModel = (CourseOutputModel)CourseOutputModelMockGetter.GetCourseOutputModelMock(mockId).Clone();
+            var expectedStatusCode = HttpStatusCode.NotFound;
+
+
+            //When 
+            _httpMethod = Method.PUT;
+            _request = new RestRequest("api/Course/0/recovery", _httpMethod);
+            var responseGet = _client.Execute<CourseExtendedOutputModel>(_request);
+            var actualStatusCode = responseGet.StatusCode;
+            var actualOutputModel = responseGet.Data;
+
+            //Then
+            Assert.AreEqual(expectedStatusCode, actualStatusCode);
+            Assert.IsNull(actualOutputModel);
+        }
+
+
 
         [TearDown]
         public void TearDown()
