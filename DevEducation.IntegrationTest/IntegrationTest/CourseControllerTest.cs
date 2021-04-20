@@ -350,7 +350,7 @@ namespace IntegrationTest
         public void AddTheme_EmptyThemeInputModelSent_ConflictResponseGot_RecievedThemeModelMatchesExpectedEmptyModel(int mockId)
         {
             //Given
-            var expectedOutputModel = (ThemeOutputModel)ThemeOutputModelMockGetter.GetThemeOutputModelMock(mockId).Clone();
+            var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.Conflict;
 
             _httpMethod = Method.POST;
@@ -359,7 +359,7 @@ namespace IntegrationTest
             _request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
 
             //When
-            var response = _client.Execute<ThemeOutputModel>(_request);
+            var response = _client.Execute<ThemeExtendedOutputModel>(_request);
             var actualStatusCode = response.StatusCode;
             var actualOutputModel = response.Data;
 
