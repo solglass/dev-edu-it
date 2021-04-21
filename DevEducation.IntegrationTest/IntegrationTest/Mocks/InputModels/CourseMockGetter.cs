@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using IntegrationTest.Mocks.InputModels;
 using IntegrationTest.Models.InputModels;
 namespace IntegrationTest.Mocks
 {
 
-    public static class CourseMockGetter
+    public  class CourseMockGetter : IModelMockGetter
     {
-        public static CourseInputModel GetCourseInputModelMock(int id)
+        public object GetInputModel(int mockId)
         {
-            return id switch
+            return mockId switch
             {
                 1 => new CourseInputModel
                 {
