@@ -28,10 +28,10 @@ namespace IntegrationTest
             var expectedOutputModel = (CourseOutputModel)CourseOutputModelMockGetter.GetCourseOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            _request = FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Create, mockId);
+            Request = FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Create, mockId);
 
             //When
-            var response = _client.Execute<CourseOutputModel>(_request);
+            var response = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = response.StatusCode;
             var actualOutputModel = response.Data;
             Assert.IsTrue(actualOutputModel.Id != 0);
@@ -53,7 +53,7 @@ namespace IntegrationTest
             FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Create, mockId);
 
             //When
-           var response = _client.Execute<string>(_request);
+           var response = Client.Execute<string>(Request);
            var actualStatusCode = response.StatusCode;
            var message = response.Data;
 
@@ -76,14 +76,14 @@ namespace IntegrationTest
             var expectedStatusCode = HttpStatusCode.OK;
 
             FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Create, mockId);
-            var response = _client.Execute<CourseOutputModel>(_request);
+            var response = Client.Execute<CourseOutputModel>(Request);
             var addedOutputModel = response.Data;
             Assert.IsTrue(addedOutputModel.Id != 0);
 
             //When 
             FormRequest<CourseInputModel>(Method.GET, new CourseMockGetter(),
               $"{TestHelper.Course_Get}/{ addedOutputModel.Id}");
-            var responseGet = _client.Execute<CourseOutputModel>(_request);
+            var responseGet = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -101,9 +101,9 @@ namespace IntegrationTest
 
 
             //When 
-            _httpMethod = Method.GET;
-            _request = new RestRequest($"api/Course/{TestHelper.Invalid_ID}", _httpMethod);
-            var responseGet = _client.Execute<string>(_request);
+            HttpMethod = Method.GET;
+            Request = new RestRequest($"/Course/{TestHelper.Invalid_ID}", HttpMethod);
+            var responseGet = Client.Execute<string>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var message = responseGet.Data;
 
@@ -121,21 +121,21 @@ namespace IntegrationTest
             var expectedStatusCode = HttpStatusCode.OK;
 
             FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Create, mockId);
-            var responsePost = _client.Execute<CourseOutputModel>(_request);
+            var responsePost = Client.Execute<CourseOutputModel>(Request);
             var addedOutputModel = responsePost.Data;
             expectedOutputModel.Id = addedOutputModel.Id;
 
 
-            _inputModel.Name = "Updated Name";
-            _inputModel.Description = "Updated description";
-            _inputModel.Duration = 9;
-            expectedOutputModel.Name = _inputModel.Name;
-            expectedOutputModel.Description = _inputModel.Description;
-            expectedOutputModel.Duration = _inputModel.Duration;
+            InputModel.Name = "Updated Name";
+            InputModel.Description = "Updated description";
+            InputModel.Duration = 9;
+            expectedOutputModel.Name = InputModel.Name;
+            expectedOutputModel.Description = InputModel.Description;
+            expectedOutputModel.Duration = InputModel.Duration;
 
             //When 
-            FormRequest<CourseInputModel>(Method.PUT, new CourseMockGetter(), $"{TestHelper.Course_Update}/{addedOutputModel.Id}", inputModel: _inputModel);
-            var responseGet = _client.Execute<CourseOutputModel>(_request);
+            FormRequest<CourseInputModel>(Method.PUT, new CourseMockGetter(), $"{TestHelper.Course_Update}/{addedOutputModel.Id}", inputModel: InputModel);
+            var responseGet = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -154,7 +154,7 @@ namespace IntegrationTest
 
 
             FormRequest<CourseInputModel>(Method.PUT, new CourseMockGetter(), $"{TestHelper.Course_Update}/{TestHelper.Invalid_ID}",  mockId);
-            var responseGet = _client.Execute<CourseOutputModel>(_request);
+            var responseGet = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -162,7 +162,7 @@ namespace IntegrationTest
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
             //Assert.IsNull(actualOutputModel);
         }
-        /*
+        
         [TestCase(1)]
         public void DeleteCourse_ValidCourseId_OkResponseGot_RecievedExtendedCourseModelMatchesExpectedEmptyModel(int mockId)
         {
@@ -170,21 +170,18 @@ namespace IntegrationTest
             var expectedOutputModel = (CourseExtendedOutputModel)CourseExtendedOutputModelGetter.GetCourseExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            _httpMethod = Method.POST;
-            _inputModel = (CourseInputModel)CourseMockGetter.GetInputModel(mockId).Clone();
-            _request = new RestRequest("api/Course", _httpMethod);
-            _request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
-            var responsePost = _client.Execute<CourseExtendedOutputModel>(_request);
-            var addedOutputModel = responsePost.Data;
+            FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Create, mockId);
+            var response = Client.Execute<CourseExtendedOutputModel>(Request);
+            var addedOutputModel = response.Data;
             expectedOutputModel.Id = addedOutputModel.Id;
             expectedOutputModel.IsDeleted = true;
-            _courseIdList.Add(expectedOutputModel.Id);
+
 
 
             //When 
-            _httpMethod = Method.DELETE;
-            _request = new RestRequest($"api/Course/{addedOutputModel.Id}", _httpMethod);
-            var responseGet = _client.Execute<CourseExtendedOutputModel>(_request);
+            HttpMethod = Method.DELETE;
+            Request = new RestRequest($"/Course/{addedOutputModel.Id}", HttpMethod);
+            var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -197,14 +194,13 @@ namespace IntegrationTest
         public void DeleteCourse_InvalidCourseIdSent_NotFoundResponseGot_RecievedNull(int mockId)
         {
             //Given
-            // var expectedOutputModel = (CourseOutputModel)CourseOutputModelMockGetter.GetCourseOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.NotFound;
 
 
             //When 
-            _httpMethod = Method.DELETE;
-            _request = new RestRequest("api/Course/0", _httpMethod);
-            var responseGet = _client.Execute<CourseExtendedOutputModel>(_request);
+            HttpMethod = Method.DELETE;
+            Request = new RestRequest("api/Course/0", HttpMethod);
+            var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -220,24 +216,24 @@ namespace IntegrationTest
             var expectedOutputModel = (CourseExtendedOutputModel)CourseExtendedOutputModelGetter.GetCourseExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            _httpMethod = Method.POST;
+            HttpMethod = Method.POST;
             _inputModel = (CourseInputModel)CourseMockGetter.GetInputModel(mockId).Clone();
-            _request = new RestRequest("api/Course", _httpMethod);
-            _request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
-            var responsePost = _client.Execute<CourseExtendedOutputModel>(_request);
+            Request = new RestRequest("api/Course", HttpMethod);
+            Request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
+            var responsePost = Client.Execute<CourseExtendedOutputModel>(Request);
             var addedOutputModel = responsePost.Data;
             expectedOutputModel.Id = addedOutputModel.Id;
             expectedOutputModel.IsDeleted = false;
             _courseIdList.Add(expectedOutputModel.Id);
 
 
-            _httpMethod = Method.DELETE;
-            _request = new RestRequest($"api/Course/{addedOutputModel.Id}", _httpMethod);
+            HttpMethod = Method.DELETE;
+            Request = new RestRequest($"api/Course/{addedOutputModel.Id}", HttpMethod);
 
             //When 
-            _httpMethod = Method.PUT;
-            _request = new RestRequest($"api/Course/{addedOutputModel.Id}/recovery", _httpMethod);
-            var responseGet = _client.Execute<CourseExtendedOutputModel>(_request);
+            HttpMethod = Method.PUT;
+            Request = new RestRequest($"api/Course/{addedOutputModel.Id}/recovery", HttpMethod);
+            var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -257,9 +253,9 @@ namespace IntegrationTest
 
 
             //When 
-            _httpMethod = Method.PUT;
-            _request = new RestRequest("api/Course/0/recovery", _httpMethod);
-            var responseGet = _client.Execute<CourseExtendedOutputModel>(_request);
+            HttpMethod = Method.PUT;
+            Request = new RestRequest("api/Course/0/recovery", HttpMethod);
+            var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -279,13 +275,13 @@ namespace IntegrationTest
             var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            _httpMethod = Method.POST;
+            HttpMethod = Method.POST;
             _themeInputModel = (ThemeInputModel)ThemeMockGetter.GetThemeInputModelMock(mockId).Clone();
-            _request = new RestRequest("api/Course/theme", _httpMethod);
-            _request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
+            Request = new RestRequest("api/Course/theme", HttpMethod);
+            Request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
 
             //When
-            var response = _client.Execute<ThemeExtendedOutputModel>(_request);
+            var response = Client.Execute<ThemeExtendedOutputModel>(Request);
             var actualStatusCode = response.StatusCode;
             var actualOutputModel = response.Data;
             Assert.IsTrue(actualOutputModel.Id != 0);
@@ -305,13 +301,13 @@ namespace IntegrationTest
             var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.Conflict;
 
-            _httpMethod = Method.POST;
+            HttpMethod = Method.POST;
             _themeInputModel = (ThemeInputModel)ThemeMockGetter.GetThemeInputModelMock(mockId).Clone();
-            _request = new RestRequest("api/Course/theme", _httpMethod);
-            _request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
+            Request = new RestRequest("api/Course/theme", HttpMethod);
+            Request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
 
             //When
-            var response = _client.Execute<ThemeExtendedOutputModel>(_request);
+            var response = Client.Execute<ThemeExtendedOutputModel>(Request);
             var actualStatusCode = response.StatusCode;
             var actualOutputModel = response.Data;
 
@@ -329,21 +325,21 @@ namespace IntegrationTest
             var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            _httpMethod = Method.POST;
+            HttpMethod = Method.POST;
             _themeInputModel = (ThemeInputModel)ThemeMockGetter.GetThemeInputModelMock(mockId).Clone();
-            _request = new RestRequest("api/Course/theme", _httpMethod);
-            _request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
+            Request = new RestRequest("api/Course/theme", HttpMethod);
+            Request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
 
 
-            var response = _client.Execute<ThemeExtendedOutputModel>(_request);
+            var response = Client.Execute<ThemeExtendedOutputModel>(Request);
             var addedOutputModel = response.Data;
             Assert.IsTrue(addedOutputModel.Id != 0);
             _themeIdList.Add(addedOutputModel.Id);
 
             //When
-            _httpMethod = Method.GET;
-            _request = new RestRequest($"api/Course/theme/{addedOutputModel.Id}", _httpMethod);
-            var responseGet = _client.Execute<ThemeExtendedOutputModel>(_request);
+            HttpMethod = Method.GET;
+            Request = new RestRequest($"api/Course/theme/{addedOutputModel.Id}", HttpMethod);
+            var responseGet = Client.Execute<ThemeExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -361,9 +357,9 @@ namespace IntegrationTest
 
 
             //When 
-            _httpMethod = Method.GET;
-            _request = new RestRequest("api/Course/theme/0", _httpMethod);
-            var responseGet = _client.Execute<CourseOutputModel>(_request);
+            HttpMethod = Method.GET;
+            Request = new RestRequest("api/Course/theme/0", HttpMethod);
+            var responseGet = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
 
@@ -379,7 +375,7 @@ namespace IntegrationTest
         [TearDown]
         public void TearDown()
         {
-            _connection.Execute("dbo.CleanDatabase", commandType: CommandType.StoredProcedure);
+            Connection.Execute("dbo.CleanDatabase", commandType: CommandType.StoredProcedure);
         }
     }
 }

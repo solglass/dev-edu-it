@@ -29,10 +29,10 @@ namespace IntegrationTest
             var expectedOutputModel = (UserOutputModel)UserOutputModelMockGetter.GetUserOutputModelMock(1).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            _request = FormRequest<UserInputModel>(Method.POST, new UserMockGetter(), TestHelper.User_Register, mockId);
+            Request = FormRequest<UserInputModel>(Method.POST, new UserMockGetter(), TestHelper.User_Register, mockId);
 
             //When
-            var response = _client.Execute<UserOutputModel>(_request);
+            var response = Client.Execute<UserOutputModel>(Request);
             var actualStatusCode = response.StatusCode;
             var actualOutputModel = response.Data;
             _userIdList.Add(actualOutputModel.Id);

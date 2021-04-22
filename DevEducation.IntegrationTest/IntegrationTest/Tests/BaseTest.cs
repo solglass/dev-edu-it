@@ -15,57 +15,55 @@ namespace IntegrationTest
 {
     public abstract class BaseTest
     {
-        protected RestClient _client;
-        protected Method _httpMethod;
-        protected RestRequest _request;
-        protected string _token;
-        protected dynamic _inputModel;
-
-
-        protected SqlConnection _connection;
-        protected AppSettings appSettings;
+        protected RestClient Client { get; set; }
+        protected Method HttpMethod { get; set; }
+        protected RestRequest Request { get; set; }
+        protected dynamic InputModel { get; set; } 
+        protected SqlConnection Connection { get;  }
+        private AppSettings _appSettings;
+        private string _token;
         public BaseTest()
         {
-            appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText("appsettings.json"));
-            _connection = new SqlConnection(appSettings.ConnectionString);
+            _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText("appsettings.json"));
+            Connection = new SqlConnection(_appSettings.ConnectionString);
         }
 
         public void SetupClient() 
         {
-            _client = new RestClient(TestHelper.ApiUrl);
-            _httpMethod = Method.POST;
-            var authenticationInputModel = new AuthenticationInputModel { Login = appSettings.Login, Password = appSettings.Password };
-            var authenticationRequest = new RestRequest(TestHelper.User_Authentication, _httpMethod);
+            Client = new RestClient(TestHelper.ApiUrl);
+            HttpMethod = Method.POST;
+            var authenticationInputModel = new AuthenticationInputModel { Login = _appSettings.Login, Password = _appSettings.Password };
+            var authenticationRequest = new RestRequest(TestHelper.User_Authentication, HttpMethod);
             authenticationRequest.AddParameter("application/json", JsonSerializer.Serialize(authenticationInputModel), ParameterType.RequestBody);
-            var authenticationResponse = _client.Execute<AuthResponse>(authenticationRequest);
+            var authenticationResponse = Client.Execute<AuthResponse>(authenticationRequest);
             _token = authenticationResponse.Data.Token;
-            _client.Authenticator = new JwtAuthenticator(_token);
+            Client.Authenticator = new JwtAuthenticator(_token);
         }
 
         public RestRequest FormRequest<T>(Method method, IModelMockGetter modelMockGetter, string route, int mockId = -1, dynamic inputModel = null)
         {
-            _inputModel = null;
-            _httpMethod = method;
-            _request = new RestRequest(route, _httpMethod);
+            InputModel = null;
+            HttpMethod = method;
+            Request = new RestRequest(route, HttpMethod);
             if (mockId > 0)
             { 
-                _inputModel = (T)modelMockGetter.GetInputModel(mockId); 
+                InputModel = (T)modelMockGetter.GetInputModel(mockId); 
             }
             else if (inputModel != null)
             {
-                _inputModel = inputModel;
+                InputModel = inputModel;
             }
-            if (_inputModel != null)
+            if (InputModel != null)
             {
-                _request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
+                Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
             }
-            return _request;
+            return Request;
         }
 
         [TearDown]
         public void DeleteAll()
         {
-            _connection.Execute("dbo.CleanDatabase", commandType: CommandType.StoredProcedure);
+            Connection.Execute("dbo.CleanDatabase", commandType: CommandType.StoredProcedure);
         }
     }
 }
