@@ -208,7 +208,7 @@ namespace IntegrationTest
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
             Assert.IsNull(actualOutputModel);
         }
-       /*
+       
         [TestCase(1)]
         public void RecoverCourse_ValidCourseId_OkResponseGot_RecievedExtendedCourseModelMatchesExpectedEmptyModel(int mockId)
         {
@@ -216,27 +216,18 @@ namespace IntegrationTest
             var expectedOutputModel = (CourseExtendedOutputModel)CourseExtendedOutputModelGetter.GetCourseExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            HttpMethod = Method.POST;
-            _inputModel = (CourseInputModel)CourseMockGetter.GetInputModel(mockId).Clone();
-            Request = new RestRequest("api/Course", HttpMethod);
-            Request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
+            FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Update, mockId);
+            var response = Client.Execute<CourseExtendedOutputModel>(Request);
+            var addedOutputModel = response.Data;
             var responsePost = Client.Execute<CourseExtendedOutputModel>(Request);
-            var addedOutputModel = responsePost.Data;
-            expectedOutputModel.Id = addedOutputModel.Id;
-            expectedOutputModel.IsDeleted = false;
-            _courseIdList.Add(expectedOutputModel.Id);
 
 
-            HttpMethod = Method.DELETE;
-            Request = new RestRequest($"api/Course/{addedOutputModel.Id}", HttpMethod);
 
             //When 
-            HttpMethod = Method.PUT;
-            Request = new RestRequest($"api/Course/{addedOutputModel.Id}/recovery", HttpMethod);
+            FormRequest<CourseInputModel>(Method.PUT, new CourseMockGetter(), $"{ TestHelper.Course_Update}/{ addedOutputModel.Id}", inputModel: addedOutputModel);
             var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
-
 
 
             //Then
@@ -254,7 +245,7 @@ namespace IntegrationTest
 
             //When 
             HttpMethod = Method.PUT;
-            Request = new RestRequest("api/Course/0/recovery", HttpMethod);
+            Request = new RestRequest("/Course/0/recovery", HttpMethod);
             var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
@@ -263,7 +254,7 @@ namespace IntegrationTest
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
             Assert.IsNull(actualOutputModel);
         }
-
+        /*
         [TestCase(1)]
         [TestCase(2)]
         [TestCase(3)]
