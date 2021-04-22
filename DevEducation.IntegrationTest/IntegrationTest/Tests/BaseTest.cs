@@ -15,10 +15,11 @@ namespace IntegrationTest
 {
     public abstract class BaseTest
     {
-        public RestClient _client;
-        public Method _httpMethod;
-        public RestRequest _request;
-        public string _token;
+        protected RestClient _client;
+        protected Method _httpMethod;
+        protected RestRequest _request;
+        protected string _token;
+        protected dynamic _inputModel;
 
 
         protected SqlConnection _connection;
@@ -41,12 +42,23 @@ namespace IntegrationTest
             _client.Authenticator = new JwtAuthenticator(_token);
         }
 
-        public RestRequest FormRequest<T>(Method method, IModelMockGetter modelMockGetter, string route, int mockId)
+        public RestRequest FormRequest<T>(Method method, IModelMockGetter modelMockGetter, string route, int mockId = -1, dynamic inputModel = null)
         {
+            _inputModel = null;
             _httpMethod = method;
             _request = new RestRequest(route, _httpMethod);
-            var inputModel = (T)modelMockGetter.GetInputModel(mockId);
-            _request.AddParameter("application/json", JsonSerializer.Serialize(inputModel), ParameterType.RequestBody);
+            if (mockId > 0)
+            { 
+                _inputModel = (T)modelMockGetter.GetInputModel(mockId); 
+            }
+            else if (inputModel != null)
+            {
+                _inputModel = inputModel;
+            }
+            if (_inputModel != null)
+            {
+                _request.AddParameter("application/json", JsonSerializer.Serialize(_inputModel), ParameterType.RequestBody);
+            }
             return _request;
         }
 

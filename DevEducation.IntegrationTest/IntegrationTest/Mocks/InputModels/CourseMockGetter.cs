@@ -5,7 +5,7 @@ using IntegrationTest.Models.InputModels;
 namespace IntegrationTest.Mocks
 {
 
-    public  class CourseMockGetter : IModelMockGetter
+    public class CourseMockGetter : IModelMockGetter
     {
         public object GetInputModel(int mockId)
         {
