@@ -101,8 +101,7 @@ namespace IntegrationTest
 
 
             //When 
-            HttpMethod = Method.GET;
-            Request = new RestRequest($"/Course/{TestHelper.Invalid_ID}", HttpMethod);
+            FormRequest<CourseInputModel>(Method.GET, new CourseMockGetter(), $"{TestHelper.Course_Get}/{TestHelper.Invalid_ID}");
             var responseGet = Client.Execute<string>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var message = responseGet.Data;
@@ -151,8 +150,6 @@ namespace IntegrationTest
 
             var expectedStatusCode = HttpStatusCode.NotFound;
 
-
-
             FormRequest<CourseInputModel>(Method.PUT, new CourseMockGetter(), $"{TestHelper.Course_Update}/{TestHelper.Invalid_ID}",  mockId);
             var responseGet = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
@@ -167,7 +164,7 @@ namespace IntegrationTest
         public void DeleteCourse_ValidCourseId_OkResponseGot_RecievedExtendedCourseModelMatchesExpectedEmptyModel(int mockId)
         {
             //Given
-            var expectedOutputModel = (CourseExtendedOutputModel)CourseExtendedOutputModelGetter.GetCourseExtendedOutputModelMock(mockId).Clone();
+            var expectedOutputModel = (CourseExtendedOutputModel)CourseExtendedOutputModelMockGetter.GetCourseExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
             FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Create, mockId);
@@ -180,7 +177,7 @@ namespace IntegrationTest
 
             //When 
             HttpMethod = Method.DELETE;
-            Request = new RestRequest($"/Course/{addedOutputModel.Id}", HttpMethod);
+            FormRequest<CourseInputModel>(Method.DELETE, new CourseMockGetter(), $"{ TestHelper.Course_Delete}/{addedOutputModel.Id}");
             var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
@@ -198,8 +195,7 @@ namespace IntegrationTest
 
 
             //When 
-            HttpMethod = Method.DELETE;
-            Request = new RestRequest("api/Course/0", HttpMethod);
+            FormRequest<CourseInputModel>(Method.DELETE, new CourseMockGetter(), $"{ TestHelper.Course_Delete}/{TestHelper.Invalid_ID}");
             var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
@@ -213,7 +209,7 @@ namespace IntegrationTest
         public void RecoverCourse_ValidCourseId_OkResponseGot_RecievedExtendedCourseModelMatchesExpectedEmptyModel(int mockId)
         {
             //Given
-            var expectedOutputModel = (CourseExtendedOutputModel)CourseExtendedOutputModelGetter.GetCourseExtendedOutputModelMock(mockId).Clone();
+            var expectedOutputModel = (CourseExtendedOutputModel)CourseExtendedOutputModelMockGetter.GetCourseExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
             FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Update, mockId);
@@ -244,8 +240,7 @@ namespace IntegrationTest
 
 
             //When 
-            HttpMethod = Method.PUT;
-            Request = new RestRequest($"/Course/{TestHelper.Invalid_ID}/recovery", HttpMethod);
+            FormRequest<CourseInputModel>(Method.PUT, new CourseMockGetter(), $"{ TestHelper.Course_Recovery}/{TestHelper.Invalid_ID}");
             var responseGet = Client.Execute<string>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var message = responseGet.Content;
@@ -337,8 +332,7 @@ namespace IntegrationTest
 
 
             //When 
-            HttpMethod = Method.GET;
-            Request = new RestRequest($"api/Course/theme/{TestHelper.Invalid_ID}", HttpMethod);
+            FormRequest<ThemeInputModel>(Method.GET, new ThemeMockGetter(), $"{ TestHelper.Theme_Get}/{TestHelper.Invalid_ID}"); ;
             var responseGet = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var message = responseGet.Content;
@@ -347,7 +341,99 @@ namespace IntegrationTest
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
             Assert.IsNotNull(message);
         }
-        
+
+        [TestCase(1)]
+        public void DeleteTheme_ValidThemeId_OkResponseGot_RecievedExtendedThemeModelMatchesExpectedEmptyModel(int mockId)
+        {
+            //Given
+            var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
+            var expectedStatusCode = HttpStatusCode.OK;
+
+            FormRequest<ThemeInputModel>(Method.POST, new ThemeMockGetter(), TestHelper.Theme_Create, mockId);
+            var response = Client.Execute<ThemeExtendedOutputModel>(Request);
+            var addedOutputModel = response.Data;
+            expectedOutputModel.Id = addedOutputModel.Id;
+            expectedOutputModel.IsDeleted = true;
+
+
+
+            //When 
+            FormRequest<ThemeInputModel>(Method.DELETE, new ThemeMockGetter(), $"{ TestHelper.Theme_Delete}/{ addedOutputModel.Id}");
+            HttpMethod = Method.DELETE;
+            var responseGet = Client.Execute<ThemeExtendedOutputModel>(Request);
+            var actualStatusCode = responseGet.StatusCode;
+            var actualOutputModel = responseGet.Data;
+
+            //Then
+            Assert.AreEqual(expectedStatusCode, actualStatusCode);
+            Assert.AreEqual(expectedOutputModel, actualOutputModel);
+        }
+
+        [TestCase(1)]
+        public void DeleteTheme_InvalidThemeIdSent_NotFoundResponseGot_RecievedNull(int mockId)
+        {
+            //Given
+            var expectedStatusCode = HttpStatusCode.NotFound;
+
+
+            //When 
+            FormRequest<ThemeInputModel>(Method.DELETE, new ThemeMockGetter(), $"{ TestHelper.Theme_Delete}/{TestHelper.Invalid_ID}");
+            var responseGet = Client.Execute<ThemeExtendedOutputModel>(Request);
+            var actualStatusCode = responseGet.StatusCode;
+            var actualOutputModel = responseGet.Data;
+
+            //Then
+            Assert.AreEqual(expectedStatusCode, actualStatusCode);
+            Assert.IsNull(actualOutputModel);
+        }
+
+        [TestCase(1)]
+        public void RecoverTheme_ValidThemeId_OkResponseGot_RecievedExtendedThemeModelMatchesExpectedEmptyModel(int mockId)
+        {
+            //Given
+            var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
+            var expectedStatusCode = HttpStatusCode.OK;
+
+            FormRequest<ThemeInputModel>(Method.POST, new ThemeMockGetter(), TestHelper.Theme_Recovery, mockId);
+            var response = Client.Execute<ThemeExtendedOutputModel>(Request);
+            var addedOutputModel = response.Data;
+            var responsePost = Client.Execute<ThemeExtendedOutputModel>(Request);
+            expectedOutputModel.Id = addedOutputModel.Id;
+
+
+            //When 
+            FormRequest<ThemeInputModel>(Method.PUT, new ThemeMockGetter(), $"{ TestHelper.Theme_Recovery}/{ addedOutputModel.Id}", inputModel: addedOutputModel);
+            var responseGet = Client.Execute<ThemeExtendedOutputModel>(Request);
+            var actualStatusCode = responseGet.StatusCode;
+            var actualOutputModel = responseGet.Data;
+
+
+            //Then
+            Assert.AreEqual(expectedStatusCode, actualStatusCode);
+            Assert.AreEqual(expectedOutputModel, actualOutputModel);
+        }
+
+        [TestCase(1)]
+        public void RecoverTheme_InvalidThemeIdSent_NotFoundResponseGot_RecievedNull(int mockId)
+        {
+            //Given
+            // var expectedOutputModel = (ThemeOutputModel)ThemeOutputModelMockGetter.GetThemeOutputModelMock(mockId).Clone();
+            var expectedStatusCode = HttpStatusCode.NotFound;
+
+
+            //When 
+            FormRequest<ThemeInputModel>(Method.PUT, new ThemeMockGetter(), $"{ TestHelper.Theme_Recovery}/{TestHelper.Invalid_ID}");
+            var responseGet = Client.Execute<string>(Request);
+            var actualStatusCode = responseGet.StatusCode;
+            var message = responseGet.Content;
+
+            //Then
+            Assert.AreEqual(expectedStatusCode, actualStatusCode);
+            Assert.IsNotNull(message);
+        }
+
+
+
 
 
 

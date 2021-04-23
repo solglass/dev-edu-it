@@ -4,7 +4,7 @@ using IntegrationTest.Models.OutputModels;
 
 namespace IntegrationTest.Mocks
 {
-    public static class CourseExtendedOutputModelGetter
+    public static class CourseExtendedOutputModelMockGetter
     {
         public static CourseExtendedOutputModel GetCourseExtendedOutputModelMock(int id)
         {
