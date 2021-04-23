@@ -109,7 +109,7 @@ namespace IntegrationTest
 
             //Then
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
-            //Assert.IsNotNull(message);
+            Assert.IsNotNull(message);
         }
 
         
@@ -156,11 +156,11 @@ namespace IntegrationTest
             FormRequest<CourseInputModel>(Method.PUT, new CourseMockGetter(), $"{TestHelper.Course_Update}/{TestHelper.Invalid_ID}",  mockId);
             var responseGet = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
-            var actualOutputModel = responseGet.Data;
+            var message = responseGet.Content;
 
             //Then
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
-            //Assert.IsNull(actualOutputModel);
+            Assert.IsNotNull(message);
         }
         
         [TestCase(1)]
@@ -254,7 +254,7 @@ namespace IntegrationTest
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
             Assert.IsNull(actualOutputModel);
         }
-        /*
+        
         [TestCase(1)]
         [TestCase(2)]
         [TestCase(3)]
@@ -266,17 +266,15 @@ namespace IntegrationTest
             var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            HttpMethod = Method.POST;
-            _themeInputModel = (ThemeInputModel)ThemeMockGetter.GetThemeInputModelMock(mockId).Clone();
-            Request = new RestRequest("api/Course/theme", HttpMethod);
-            Request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
+
+            FormRequest<ThemeInputModel>(Method.POST, new ThemeMockGetter(), TestHelper.Theme_Create, mockId);
+
 
             //When
             var response = Client.Execute<ThemeExtendedOutputModel>(Request);
             var actualStatusCode = response.StatusCode;
             var actualOutputModel = response.Data;
             Assert.IsTrue(actualOutputModel.Id != 0);
-            _themeIdList.Add(actualOutputModel.Id);
 
 
             //Then
@@ -286,27 +284,23 @@ namespace IntegrationTest
         }
 
         [TestCase(6)]
-        public void AddTheme_EmptyThemeInputModelSent_ConflictResponseGot_RecievedThemeModelMatchesExpectedEmptyModel(int mockId)
+        public void AddTheme_EmptyThemeInputModelSent_ConflictResponseGot_RecievedErrorMessageIsNotNull(int mockId)
         {
             //Given
             var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.Conflict;
 
-            HttpMethod = Method.POST;
-            _themeInputModel = (ThemeInputModel)ThemeMockGetter.GetThemeInputModelMock(mockId).Clone();
-            Request = new RestRequest("api/Course/theme", HttpMethod);
-            Request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
+            FormRequest<ThemeInputModel>(Method.POST, new ThemeMockGetter(), TestHelper.Theme_Create, mockId);
 
             //When
-            var response = Client.Execute<ThemeExtendedOutputModel>(Request);
+            var response = Client.Execute<string>(Request);
             var actualStatusCode = response.StatusCode;
-            var actualOutputModel = response.Data;
+            var message = response.Data;
 
 
             //Then
-            Assert.IsTrue(actualOutputModel.Id == 0);
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
-            Assert.AreEqual(expectedOutputModel, actualOutputModel);
+            Assert.IsNotNull(message);
         }
 
         [TestCase(1)]
@@ -316,20 +310,15 @@ namespace IntegrationTest
             var expectedOutputModel = (ThemeExtendedOutputModel)ThemeExtendedOutputModelMockGetter.GetThemeExtendedOutputModelMock(mockId).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
 
-            HttpMethod = Method.POST;
-            _themeInputModel = (ThemeInputModel)ThemeMockGetter.GetThemeInputModelMock(mockId).Clone();
-            Request = new RestRequest("api/Course/theme", HttpMethod);
-            Request.AddParameter("application/json", JsonSerializer.Serialize(_themeInputModel), ParameterType.RequestBody);
-
+            FormRequest<ThemeInputModel>(Method.POST, new ThemeMockGetter(), TestHelper.Theme_Create, mockId);
 
             var response = Client.Execute<ThemeExtendedOutputModel>(Request);
             var addedOutputModel = response.Data;
             Assert.IsTrue(addedOutputModel.Id != 0);
-            _themeIdList.Add(addedOutputModel.Id);
 
             //When
-            HttpMethod = Method.GET;
-            Request = new RestRequest($"api/Course/theme/{addedOutputModel.Id}", HttpMethod);
+            FormRequest<ThemeExtendedOutputModel>(Method.GET, new ThemeMockGetter(), $"{TestHelper.Theme_Get}/{addedOutputModel.Id}");
+  
             var responseGet = Client.Execute<ThemeExtendedOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
             var actualOutputModel = responseGet.Data;
@@ -341,7 +330,7 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void GetCourse_InvalidThemeIdSent_NotFoundResponseGot_RecievedCourseModelIsNull()
+        public void GetCourse_InvalidThemeIdSent_NotFoundResponseGot_RecievedErrorMessageNotNull()
         {
             //Given
             var expectedStatusCode = HttpStatusCode.NotFound;
@@ -349,16 +338,16 @@ namespace IntegrationTest
 
             //When 
             HttpMethod = Method.GET;
-            Request = new RestRequest("api/Course/theme/0", HttpMethod);
+            Request = new RestRequest($"api/Course/theme/{TestHelper.Invalid_ID}", HttpMethod);
             var responseGet = Client.Execute<CourseOutputModel>(Request);
             var actualStatusCode = responseGet.StatusCode;
-            var actualOutputModel = responseGet.Data;
+            var message = responseGet.Content;
 
             //Then
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
-            Assert.IsNull(actualOutputModel);
+            Assert.IsNotNull(message);
         }
-        */
+        
 
 
 

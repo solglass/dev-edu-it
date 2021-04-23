@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using IntegrationTest.Mocks.InputModels;
 using IntegrationTest.Models.InputModels;
 using IntegrationTest.Models.OutputModels;
 
 namespace IntegrationTest.Mocks
 {
-    public static class ThemeMockGetter
+    public  class ThemeMockGetter : IModelMockGetter
     {
-        public static ThemeInputModel GetThemeInputModelMock(int id)
+        public object GetInputModel(int mockId)
         {
-            return id switch
+            return mockId switch
             {
                 1 => new ThemeInputModel
                 {
