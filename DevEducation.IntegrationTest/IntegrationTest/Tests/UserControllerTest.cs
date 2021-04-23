@@ -11,14 +11,16 @@ using System.Data;
 
 namespace IntegrationTest
 {
-    public class UserControllerTest : BaseTest
+    public class UserControllerTest 
     {
         private List<int> _userIdList;
-
+        public IRestClient Client { get; set; }
+        public RestRequest Request { get; set; }
         [SetUp]
         public void Setup()
         {
-            SetupClient();
+            Client = new RestClient(TestHelper.ApiUrl);
+            Client.SetupClient();
             _userIdList = new List<int>();
         }
 
@@ -28,8 +30,8 @@ namespace IntegrationTest
             //Given
             var expectedOutputModel = (UserOutputModel)UserOutputModelMockGetter.GetUserOutputModelMock(1).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
-
-            Request = FormRequest<UserInputModel>(Method.POST, new UserMockGetter(), TestHelper.User_Register, mockId);
+            var inputModel = UserMockGetter.GetInputModel(mockId);
+            Request = BaseTest.FormPostRequest<UserInputModel>(Method.POST, TestHelper.User_Register, inputModel);
 
             //When
             var response = Client.Execute<UserOutputModel>(Request);

@@ -12,25 +12,25 @@ using System.Data;
 using NUnit.Framework;
 
 namespace IntegrationTest
-{//TODO EXTENSION METHOD to IRestClient
-    public abstract class BaseTest
+{
+    public static class BaseTest
     {
-        protected RestClient Client { get; set; }
-        protected Method HttpMethod { get; set; }
-        protected RestRequest Request { get; set; }
-        protected dynamic InputModel { get; set; } 
-        protected SqlConnection Connection { get;  }
-        private AppSettings _appSettings;
-        private string _token;
-        public BaseTest()
+
+        public static Method HttpMethod { get; set; }
+        public static RestRequest Request { get; set; }
+        public static SqlConnection Connection { get; private set; }
+        private static AppSettings _appSettings;
+        private static string _token;
+
+        static BaseTest()
         {
             _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText("appsettings.json"));
             Connection = new SqlConnection(_appSettings.ConnectionString);
         }
 
-        public void SetupClient() 
+        public static void SetupClient(this IRestClient Client)
         {
-            Client = new RestClient(TestHelper.ApiUrl);
+
             HttpMethod = Method.POST;
             var authenticationInputModel = new AuthenticationInputModel { Login = _appSettings.Login, Password = _appSettings.Password };
             var authenticationRequest = new RestRequest(TestHelper.User_Authentication, HttpMethod);
@@ -40,23 +40,48 @@ namespace IntegrationTest
             Client.Authenticator = new JwtAuthenticator(_token);
         }
 
-        public RestRequest FormRequest<T>(Method method, string route, T inputModel = default )
+        public static RestRequest FormPostRequest<T>(Method method, string route, T inputModel)
         {
-            InputModel = null;
-            HttpMethod = method;
+            HttpMethod = Method.POST;
             Request = new RestRequest(route, HttpMethod);
-  
-                InputModel = inputModel;
- 
-            if (InputModel != null)
-            {
-                Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
-            }
+
+            var InputModel = inputModel;
+
+            Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
+
+            return Request;
+        }
+
+        public static RestRequest FormPutRequest<T>(Method method, string route, T inputModel)
+        {
+            HttpMethod = Method.PUT;
+            Request = new RestRequest(route, HttpMethod);
+
+           var InputModel = inputModel;
+
+            Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
+
+            return Request;
+        }
+
+        public static RestRequest FormGetRequest<T>(Method method, string route)
+        {
+            HttpMethod = Method.GET;
+            Request = new RestRequest(route, HttpMethod);
+
+            return Request;
+        }
+
+        public static RestRequest FormDeleteRequest<T>(Method method, string route)
+        {
+            HttpMethod = Method.DELETE;
+            Request = new RestRequest(route, HttpMethod);
+
             return Request;
         }
 
         [TearDown]
-        public void DeleteAll()
+        public static void DeleteAll()
         {
             Connection.Execute("dbo.CleanDatabase", commandType: CommandType.StoredProcedure);
         }

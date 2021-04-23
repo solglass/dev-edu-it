@@ -6,9 +6,9 @@ using IntegrationTest.Models.OutputModels;
 
 namespace IntegrationTest.Mocks
 {
-    public static ThemeInputModel ThemeMockGetter 
+    public static class ThemeMockGetter 
     {
-        public object GetInputModel(int mockId)
+        public static ThemeInputModel GetInputModel(int mockId)
         {
             return mockId switch
             {
