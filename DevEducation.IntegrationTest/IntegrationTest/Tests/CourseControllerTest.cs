@@ -245,14 +245,14 @@ namespace IntegrationTest
 
             //When 
             HttpMethod = Method.PUT;
-            Request = new RestRequest("/Course/0/recovery", HttpMethod);
-            var responseGet = Client.Execute<CourseExtendedOutputModel>(Request);
+            Request = new RestRequest($"/Course/{TestHelper.Invalid_ID}/recovery", HttpMethod);
+            var responseGet = Client.Execute<string>(Request);
             var actualStatusCode = responseGet.StatusCode;
-            var actualOutputModel = responseGet.Data;
+            var message = responseGet.Content;
 
             //Then
             Assert.AreEqual(expectedStatusCode, actualStatusCode);
-            Assert.IsNull(actualOutputModel);
+            Assert.IsNotNull(message);
         }
         
         [TestCase(1)]
@@ -330,7 +330,7 @@ namespace IntegrationTest
         }
 
         [Test]
-        public void GetCourse_InvalidThemeIdSent_NotFoundResponseGot_RecievedErrorMessageNotNull()
+        public void GetTheme_InvalidThemeIdSent_NotFoundResponseGot_RecievedErrorMessageNotNull()
         {
             //Given
             var expectedStatusCode = HttpStatusCode.NotFound;
