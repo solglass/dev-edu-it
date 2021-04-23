@@ -12,7 +12,7 @@ using System.Data;
 using NUnit.Framework;
 
 namespace IntegrationTest
-{
+{//TODO EXTENSION METHOD to IRestClient
     public abstract class BaseTest
     {
         protected RestClient Client { get; set; }
@@ -40,19 +40,14 @@ namespace IntegrationTest
             Client.Authenticator = new JwtAuthenticator(_token);
         }
 
-        public RestRequest FormRequest<T>(Method method, IModelMockGetter modelMockGetter, string route, int mockId = -1, dynamic inputModel = null)
+        public RestRequest FormRequest<T>(Method method, string route, T inputModel = default )
         {
             InputModel = null;
             HttpMethod = method;
             Request = new RestRequest(route, HttpMethod);
-            if (mockId > 0)
-            { 
-                InputModel = (T)modelMockGetter.GetInputModel(mockId); 
-            }
-            else if (inputModel != null)
-            {
+  
                 InputModel = inputModel;
-            }
+ 
             if (InputModel != null)
             {
                 Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);

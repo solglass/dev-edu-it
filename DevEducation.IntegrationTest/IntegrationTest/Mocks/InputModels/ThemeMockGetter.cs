@@ -6,7 +6,7 @@ using IntegrationTest.Models.OutputModels;
 
 namespace IntegrationTest.Mocks
 {
-    public  class ThemeMockGetter : IModelMockGetter
+    public static ThemeInputModel ThemeMockGetter 
     {
         public object GetInputModel(int mockId)
         {

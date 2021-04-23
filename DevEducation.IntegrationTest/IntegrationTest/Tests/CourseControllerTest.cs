@@ -78,7 +78,6 @@ namespace IntegrationTest
             FormRequest<CourseInputModel>(Method.POST, new CourseMockGetter(), TestHelper.Course_Create, mockId);
             var response = Client.Execute<CourseOutputModel>(Request);
             var addedOutputModel = response.Data;
-            Assert.IsTrue(addedOutputModel.Id != 0);
 
             //When 
             FormRequest<CourseInputModel>(Method.GET, new CourseMockGetter(),
