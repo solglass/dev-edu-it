@@ -16,7 +16,6 @@ namespace IntegrationTest
     public static class BaseTest
     {
 
-        public static Method HttpMethod { get; set; }
         public static RestRequest Request { get; set; }
         public static SqlConnection Connection { get; private set; }
         private static AppSettings _appSettings;
@@ -31,9 +30,8 @@ namespace IntegrationTest
         public static void SetupClient(this IRestClient Client)
         {
 
-            HttpMethod = Method.POST;
             var authenticationInputModel = new AuthenticationInputModel { Login = _appSettings.Login, Password = _appSettings.Password };
-            var authenticationRequest = new RestRequest(TestHelper.User_Authentication, HttpMethod);
+            var authenticationRequest = new RestRequest(TestHelper.User_Authentication, Method.POST);
             authenticationRequest.AddParameter("application/json", JsonSerializer.Serialize(authenticationInputModel), ParameterType.RequestBody);
             var authenticationResponse = Client.Execute<AuthResponse>(authenticationRequest);
             _token = authenticationResponse.Data.Token;
@@ -42,8 +40,7 @@ namespace IntegrationTest
 
         public static RestRequest FormPostRequest<T>(this IRestClient Client, string route, T inputModel)
         {
-            HttpMethod = Method.POST;
-            Request = new RestRequest(route, HttpMethod);
+            Request = new RestRequest(route, Method.POST);
 
             var InputModel = inputModel;
 
@@ -54,8 +51,8 @@ namespace IntegrationTest
 
         public static RestRequest FormPutRequest<T>(this IRestClient Client, string route, T inputModel)
         {
-            HttpMethod = Method.PUT;
-            Request = new RestRequest(route, HttpMethod);
+
+            Request = new RestRequest(route, Method.PUT);
 
            var InputModel = inputModel;
 
@@ -66,16 +63,15 @@ namespace IntegrationTest
 
         public static RestRequest FormGetRequest<T>(this IRestClient Client, string route)
         {
-            HttpMethod = Method.GET;
-            Request = new RestRequest(route, HttpMethod);
+            Request = new RestRequest(route, Method.GET);
 
             return Request;
         }
 
         public static RestRequest FormDeleteRequest<T>(this IRestClient Client, string route)
         {
-            HttpMethod = Method.DELETE;
-            Request = new RestRequest(route, HttpMethod);
+
+            Request = new RestRequest(route, Method.DELETE);
 
             return Request;
         }
