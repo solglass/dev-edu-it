@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using IntegrationTest.Models.InputModels;
 namespace IntegrationTest.Mocks.InputModels
 {
-    public class UserMockGetter : IModelMockGetter
+    public static class UserMockGetter 
     {
-        public object GetInputModel(int mockId)
+        public static UserInputModel GetInputModel(int mockId)
         {
 
             UserInputModel UserInputModel = mockId switch

@@ -13,47 +13,62 @@ using NUnit.Framework;
 
 namespace IntegrationTest
 {
-    public abstract class BaseTest
+    public static class BaseTest
     {
-        public RestClient _client;
-        public Method _httpMethod;
-        public RestRequest _request;
-        public string _token;
 
+        public static RestRequest Request { get; set; }
+        public static SqlConnection Connection { get; private set; }
+        private static AppSettings _appSettings;
+        private static string _token;
 
-        protected SqlConnection _connection;
-        protected AppSettings appSettings;
-        public BaseTest()
+        static BaseTest()
         {
-            appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText("appsettings.json"));
-            _connection = new SqlConnection(appSettings.ConnectionString);
+            _appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText("appsettings.json"));
+            Connection = new SqlConnection(_appSettings.ConnectionString);
         }
 
-        public void SetupClient() 
+        public static void SetupClient(this IRestClient Client)
         {
-            _client = new RestClient(TestHelper.ApiUrl);
-            _httpMethod = Method.POST;
-            var authenticationInputModel = new AuthenticationInputModel { Login = appSettings.Login, Password = appSettings.Password };
-            var authenticationRequest = new RestRequest(TestHelper.User_Authentication, _httpMethod);
+
+            var authenticationInputModel = new AuthenticationInputModel { Login = _appSettings.Login, Password = _appSettings.Password };
+            var authenticationRequest = new RestRequest(TestHelper.User_Authentication, Method.POST);
             authenticationRequest.AddParameter("application/json", JsonSerializer.Serialize(authenticationInputModel), ParameterType.RequestBody);
-            var authenticationResponse = _client.Execute<AuthResponse>(authenticationRequest);
+            var authenticationResponse = Client.Execute<AuthResponse>(authenticationRequest);
             _token = authenticationResponse.Data.Token;
-            _client.Authenticator = new JwtAuthenticator(_token);
+            Client.Authenticator = new JwtAuthenticator(_token);
         }
 
-        public RestRequest FormRequest<T>(Method method, IModelMockGetter modelMockGetter, string route, int mockId)
+        public static RestRequest FormPostRequest<T>(this IRestClient Client, string route, T inputModel)
         {
-            _httpMethod = method;
-            _request = new RestRequest(route, _httpMethod);
-            var inputModel = (T)modelMockGetter.GetInputModel(mockId);
-            _request.AddParameter("application/json", JsonSerializer.Serialize(inputModel), ParameterType.RequestBody);
-            return _request;
+            Request = new RestRequest(route, Method.POST);
+
+            var InputModel = inputModel;
+
+            Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
+
+            return Request;
         }
+
+        public static RestRequest FormPutRequest<T>(this IRestClient Client, string route, T inputModel)
+        {
+
+            Request = new RestRequest(route, Method.PUT);
+
+            var InputModel = inputModel;
+
+            Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
+
+            return Request;
+        }
+
+        public static RestRequest FormGetRequest<T>(this IRestClient Client, string route) => new RestRequest(route, Method.GET);
+
+        public static RestRequest FormDeleteRequest<T>(this IRestClient Client, string route) =>  new RestRequest(route, Method.DELETE);
 
         [TearDown]
-        public void DeleteAll()
+        public static void DeleteAll()
         {
-            _connection.Execute("dbo.CleanDatabase", commandType: CommandType.StoredProcedure);
+            Connection.Execute("dbo.CleanDatabase", commandType: CommandType.StoredProcedure);
         }
     }
 }

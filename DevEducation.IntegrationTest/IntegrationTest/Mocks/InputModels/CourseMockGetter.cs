@@ -5,9 +5,9 @@ using IntegrationTest.Models.InputModels;
 namespace IntegrationTest.Mocks
 {
 
-    public  class CourseMockGetter : IModelMockGetter
+    public static class CourseMockGetter 
     {
-        public object GetInputModel(int mockId)
+        public static CourseInputModel GetInputModel(int mockId)
         {
             return mockId switch
             {
