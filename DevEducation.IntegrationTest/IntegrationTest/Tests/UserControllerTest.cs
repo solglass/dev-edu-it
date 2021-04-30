@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using RestSharp;
 using IntegrationTest.Models.InputModels;
 using IntegrationTest.Mocks.InputModels;
@@ -14,13 +14,13 @@ namespace IntegrationTest
     public class UserControllerTest 
     {
         private List<int> _userIdList;
-        public IRestClient Client { get; set; }
-        public RestRequest Request { get; set; }
+        private IRestClient _client;
+        private RestRequest _request;
         [SetUp]
         public void Setup()
         {
-            Client = new RestClient(TestHelper.ApiUrl);
-            Client.SetupClient();
+            _client = new RestClient(TestHelper.ApiUrl);
+            _client.SetupClient();
             _userIdList = new List<int>();
         }
 
@@ -31,10 +31,10 @@ namespace IntegrationTest
             var expectedOutputModel = (UserOutputModel)UserOutputModelMockGetter.GetUserOutputModelMock(1).Clone();
             var expectedStatusCode = HttpStatusCode.OK;
             var inputModel = UserMockGetter.GetInputModel(mockId);
-            Request = BaseTest.FormPostRequest<UserInputModel>(Method.POST, TestHelper.User_Register, inputModel);
+            _request = _client.FormPostRequest<UserInputModel>( TestHelper.User_Register, inputModel);
 
             //When
-            var response = Client.Execute<UserOutputModel>(Request);
+            var response = _client.Execute<UserOutputModel>(_request);
             var actualStatusCode = response.StatusCode;
             var actualOutputModel = response.Data;
             _userIdList.Add(actualOutputModel.Id);

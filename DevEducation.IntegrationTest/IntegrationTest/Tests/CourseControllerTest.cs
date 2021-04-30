@@ -12,13 +12,13 @@ namespace IntegrationTest
 {
     public class CourseControllerTest
     {
-        public IRestClient Client { get; set; }
-        public RestRequest Request { get; set; }
+        private IRestClient _client;
+        private RestRequest _request;
         [SetUp]
         public void Setup()
         {
-            Client = new RestClient(TestHelper.ApiUrl);
-            Client.SetupClient();
+            _client = new RestClient(TestHelper.ApiUrl);
+            _client.SetupClient();
         }
 
         [TestCase(1)]
@@ -31,10 +31,10 @@ namespace IntegrationTest
 
             var inputModel = CourseMockGetter.GetInputModel(mockId);
 
-            Request = BaseTest.FormPostRequest<CourseInputModel>(Method.POST, TestHelper.Course_Create, inputModel);
+            _request = _client.FormPostRequest<CourseInputModel>( TestHelper.Course_Create, inputModel);
 
             //When
-            var response = Client.Execute<CourseOutputModel>(Request);
+            var response = _client.Execute<CourseOutputModel>(_request);
             var actualOutputModel = response.Data;
             Assert.IsTrue(actualOutputModel.Id != 0);
 
@@ -53,10 +53,10 @@ namespace IntegrationTest
 
             var inputModel = CourseMockGetter.GetInputModel(mockId);
 
-            Request = BaseTest.FormPostRequest<CourseInputModel>(Method.POST, TestHelper.Course_Create, inputModel);
+            _request = _client.FormPostRequest<CourseInputModel>( TestHelper.Course_Create, inputModel);
 
             //When
-           var response = Client.Execute<string>(Request);
+           var response = _client.Execute<string>(_request);
            var message = response.Data;
 
 

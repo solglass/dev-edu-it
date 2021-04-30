@@ -40,7 +40,7 @@ namespace IntegrationTest
             Client.Authenticator = new JwtAuthenticator(_token);
         }
 
-        public static RestRequest FormPostRequest<T>(Method method, string route, T inputModel)
+        public static RestRequest FormPostRequest<T>(this IRestClient Client, string route, T inputModel)
         {
             HttpMethod = Method.POST;
             Request = new RestRequest(route, HttpMethod);
@@ -52,7 +52,7 @@ namespace IntegrationTest
             return Request;
         }
 
-        public static RestRequest FormPutRequest<T>(Method method, string route, T inputModel)
+        public static RestRequest FormPutRequest<T>(this IRestClient Client, string route, T inputModel)
         {
             HttpMethod = Method.PUT;
             Request = new RestRequest(route, HttpMethod);
@@ -64,7 +64,7 @@ namespace IntegrationTest
             return Request;
         }
 
-        public static RestRequest FormGetRequest<T>(Method method, string route)
+        public static RestRequest FormGetRequest<T>(this IRestClient Client, string route)
         {
             HttpMethod = Method.GET;
             Request = new RestRequest(route, HttpMethod);
@@ -72,7 +72,7 @@ namespace IntegrationTest
             return Request;
         }
 
-        public static RestRequest FormDeleteRequest<T>(Method method, string route)
+        public static RestRequest FormDeleteRequest<T>(this IRestClient Client, string route)
         {
             HttpMethod = Method.DELETE;
             Request = new RestRequest(route, HttpMethod);
