@@ -54,27 +54,16 @@ namespace IntegrationTest
 
             Request = new RestRequest(route, Method.PUT);
 
-           var InputModel = inputModel;
+            var InputModel = inputModel;
 
             Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
 
             return Request;
         }
 
-        public static RestRequest FormGetRequest<T>(this IRestClient Client, string route)
-        {
-            Request = new RestRequest(route, Method.GET);
+        public static RestRequest FormGetRequest<T>(this IRestClient Client, string route) => new RestRequest(route, Method.GET);
 
-            return Request;
-        }
-
-        public static RestRequest FormDeleteRequest<T>(this IRestClient Client, string route)
-        {
-
-            Request = new RestRequest(route, Method.DELETE);
-
-            return Request;
-        }
+        public static RestRequest FormDeleteRequest<T>(this IRestClient Client, string route) =>  new RestRequest(route, Method.DELETE);
 
         [TearDown]
         public static void DeleteAll()
