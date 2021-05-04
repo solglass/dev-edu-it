@@ -49,13 +49,16 @@ namespace IntegrationTest
             return Request;
         }
 
-        public static RestRequest FormPutRequest<T>(this IRestClient Client, string route, T inputModel)
+        public static RestRequest FormPutRequest<T>(this IRestClient Client, string route, T inputModel = default)
         {
 
             Request = new RestRequest(route, Method.PUT);
 
+            if (inputModel == null)
+            {
+                return Request;
+            }
             var InputModel = inputModel;
-
             Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
 
             return Request;

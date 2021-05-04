@@ -10,7 +10,7 @@
         public const string Course_Create = "Course";
         public const string Course_Get= "Course";
         public const string Course_Update = "Course";
-        public const string Course_Recovery = "Course/recovery";
+        public const string Course_Recovery = "recovery";
         public const string Course_Delete = "Course";
         public const string Theme_Create = "Course/theme";
         public const string Theme_Get = "Course/theme";
