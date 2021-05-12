@@ -45,6 +45,7 @@ namespace IntegrationTest
             Assert.AreEqual(expectedOutputModel, actualOutputModel);
         }
 
+
         [TestCase(6)]
         public void AddCourse_EmptyCourseInputModelSent_ConflictResponseGot_MessageIsNotNull(int mockId)
         {
@@ -79,6 +80,41 @@ namespace IntegrationTest
             _request = _client.FormPostRequest(TestHelper.Course_Create, inputModel);
             var response = _client.Execute<CourseOutputModel>(_request);
             var addedOutputModel = response.Data;
+
+            //When 
+            _request = _client.FormGetRequest<CourseInputModel>($"{TestHelper.Course_Get}/{ addedOutputModel.Id}");
+            var responseGet = _client.Execute<CourseOutputModel>(_request);
+            var actualStatusCode = responseGet.StatusCode;
+            var actualOutputModel = responseGet.Data;
+
+            //Then
+
+            Assert.AreEqual(HttpStatusCode.OK, actualStatusCode);
+            Assert.AreEqual(expectedOutputModel, actualOutputModel);
+            CollectionAssert.AreEqual(expectedOutputModel.Themes, actualOutputModel.Themes);
+            CollectionAssert.AreEqual(expectedOutputModel.Materials, actualOutputModel.Materials);
+        }
+
+        [TestCase(1)]
+        public void GetCourseWithThemesAndMaterials_ValidCourseIdSent_OkResponseGot_RecievedCourseModelMatchesExpected(int mockId)
+        {
+            //Given
+            var expectedOutputModel = (CourseOutputModel)CourseOutputModelMockGetter.GetCourseOutputModelMock(mockId).Clone();
+
+            var inputModel = (CourseInputModel)CourseMockGetter.GetInputModel(mockId).Clone();
+            _request = _client.FormPostRequest(TestHelper.Course_Create, inputModel);
+            var response = _client.Execute<CourseOutputModel>(_request);
+            var addedOutputModel = response.Data;
+
+            var ThemeinputModel = (ThemeInputModel)ThemeMockGetter.GetInputModel(mockId).Clone();
+            _request = _client.FormPostRequest(TestHelper.Theme_Create, inputModel);
+            var responseTheme = _client.Execute<ThemeOutputModel>(_request);
+            var addedThemeOutputModel = response.Data;
+
+            var MaterialinputModel = (MaterialInputModel)MaterialMockGetter.GetInputModel(mockId).Clone();
+            _request = _client.FormPostRequest(TestHelper.Material_Create, inputModel);
+            var responseMaterial = _client.Execute<MaterialOutputModel>(_request);
+            var addedMaterialOutputModel = response.Data;
 
             //When 
             _request = _client.FormGetRequest<CourseInputModel>($"{TestHelper.Course_Get}/{ addedOutputModel.Id}");
