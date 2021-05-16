@@ -38,13 +38,15 @@ namespace IntegrationTest
             Client.Authenticator = new JwtAuthenticator(_token);
         }
 
-        public static RestRequest FormPostRequest<T>(this IRestClient Client, string route, T inputModel)
+        public static RestRequest FormPostRequest<T>(this IRestClient Client, string route, T inputModel = default)
         {
             Request = new RestRequest(route, Method.POST);
 
             var InputModel = inputModel;
-
-            Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
+            if (inputModel != null)
+            {
+                Request.AddParameter("application/json", JsonSerializer.Serialize(InputModel), ParameterType.RequestBody);
+            }
 
             return Request;
         }

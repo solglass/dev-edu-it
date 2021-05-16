@@ -16,10 +16,11 @@
         public const string Theme_Get = "Course/theme";
         public const string Theme_Recovery = "Course/theme";
         public const string Theme_Delete = "Course/theme";
-        public const string Material_Create = "Course/material";
+        public const string Material_Create = "Material";
         public const string Material_Get = "Course/material";
         public const string Material_Recovery = "Course/material";
         public const string Material_Delete = "Course/material";
+        public const string AddMaterialToCourse = "/material/";
 
         public const string Invalid_ID = "-1";
     }

@@ -14,7 +14,6 @@ namespace IntegrationTest.Models.OutputModels
                 Name = Name,
                 Description = Description,
                 Duration = Duration,
-                Themes = Themes,
                 Materials = Materials,
                 IsDeleted = IsDeleted
             };
