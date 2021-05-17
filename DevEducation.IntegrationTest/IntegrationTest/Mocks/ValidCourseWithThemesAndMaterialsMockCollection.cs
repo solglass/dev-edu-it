@@ -19,24 +19,6 @@ namespace IntegrationTest.Mocks
                 Themes = new List<ThemeOrderedOutputModel>(),
                 Materials = new List<MaterialOutputModel>()
             }, 
-            new ThemeOutputModel[] { new ThemeOutputModel
-            {
-                Name = "Test theme 1"
-            }, new ThemeOutputModel
-            {
-                Name = "Test theme 2"
-            } 
-            },
-            new MaterialOutputModel[] { new MaterialOutputModel
-            {
-                Description = "Description test",
-                Link = "Link test1"
-            }, new MaterialOutputModel
-            {
-                Description = "Description test2",
-                Link = "Link test2"
-            }              
-            },
              new CourseInputModel
              {
                  Description = "Course Test 1 mock",

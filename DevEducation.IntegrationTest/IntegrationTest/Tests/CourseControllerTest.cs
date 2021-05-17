@@ -62,7 +62,7 @@ namespace IntegrationTest
         }
 
         [TestCaseSource(typeof(ValidCourseWithThemesAndMaterialsMockCollection))]
-        public void AddCourse_ValidCourseInputModelWithThemesAndMaterialsSent_OkResponseGot_RecievedCourseModelMatchesExpected(CourseWithProgramOutputModel expectedOutputModel, ThemeOutputModel[] themesExpected, MaterialOutputModel[] materialsExpected, CourseInputModel inputModel, ThemeInputModel[] themesMocks, MaterialInputModel[] materialsMocks)
+        public void AddCourse_ValidCourseInputModelWithThemesAndMaterialsSent_OkResponseGot_RecievedCourseModelMatchesExpected(CourseWithProgramOutputModel expectedOutputModel, CourseInputModel inputModel, ThemeInputModel[] themesMocks, MaterialInputModel[] materialsMocks)
         {
             //Given
             var themesExpectedOrdered = new List<ThemeOrderedOutputModel>();
