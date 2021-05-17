@@ -25,7 +25,7 @@ namespace IntegrationTest
         [TestCaseSource(typeof(ValidCourseWithoutThemesAndMaterialsMockCollection))]
         public void AddCourse_ValidCourseInputModelSent_OkResponseGot_RecievedCourseModelMatchesExpected(CourseOutputModel expectedOutputModel, CourseInputModel inputModel)
         {
-
+                //Given
                 _request = _client.FormPostRequest<CourseInputModel>(TestHelper.Course_Create, inputModel);
 
                 //When
@@ -66,13 +66,10 @@ namespace IntegrationTest
         {
             //Given
             var themesExpectedOrdered = new List<ThemeOrderedOutputModel>();
-            // var materialsExpected = new List<MaterialOutputModel>();
             int order = 1;
             foreach (ThemeInputModel themeInputModel in themesMocks)
             {
                 
-                //var themeInputModel = (ThemeInputModel)ThemeMockGetter.GetInputModel(themeMockId).Clone();
-                //themesMocks.Add(themeInputModel);
                 _request = _client.FormPostRequest<ThemeInputModel>(TestHelper.Theme_Create, themeInputModel);
                 var responseTheme = _client.Execute<ThemeOutputModel>(_request);
                 var addedThemeOutputModel = responseTheme.Data;
@@ -80,7 +77,6 @@ namespace IntegrationTest
                 expectedOutputModel.Themes.Add(new ThemeOrderedOutputModel { Order = order, Id = addedThemeOutputModel.Id });
                 order += 1;
             }
-            //expectedOutputModel.Themes = themesExpected;
 
             foreach (MaterialInputModel materialinputModel in materialsMocks)
             {
