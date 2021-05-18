@@ -8,7 +8,7 @@ namespace IntegrationTest.Models.InputModels
         public string Name { get; set; }
         public string Description { get; set; }
         public int Duration { get; set; }
-        public List<int> ThemeIds { get; set; }
+        public List<OrderedThemeInputModel> Themes { get; set; }
         public List<int> MaterialIds { get; set; }
 
         public object Clone()
@@ -18,7 +18,7 @@ namespace IntegrationTest.Models.InputModels
                 Name = Name,
                 Description = Description,
                 Duration = Duration,
-                ThemeIds = ThemeIds,
+                Themes = Themes,
                 MaterialIds = MaterialIds
             };
         }

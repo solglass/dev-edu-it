@@ -9,7 +9,6 @@ namespace IntegrationTest.Models.OutputModels
         public string Name { get; set; }
         public string Description { get; set; }
         public int Duration { get; set; }
-        public List<ThemeOutputModel> Themes { get; set; }
         public List<MaterialOutputModel> Materials { get; set; }
 
         public virtual object Clone()
@@ -20,7 +19,6 @@ namespace IntegrationTest.Models.OutputModels
                 Name = Name,
                 Description = Description,
                 Duration = Duration,
-                Themes = Themes,
                 Materials = Materials
             };
         }

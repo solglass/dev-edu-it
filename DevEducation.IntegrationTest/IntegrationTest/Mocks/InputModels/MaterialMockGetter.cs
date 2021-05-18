@@ -7,7 +7,7 @@ namespace IntegrationTest.Mocks
 {
     public static class MaterialMockGetter
     {
-        public static MaterialInputModel GetMaterialInputModelMock(int caseId)
+        public static MaterialInputModel GetInputModel(int caseId)
         {
             return caseId switch
             {
